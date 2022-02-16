@@ -15,6 +15,24 @@ import {
   NotificationOutlined, 
 } from '@ant-design/icons'
 
+import { 
+  If, 
+  Then, 
+  Else, 
+  When, 
+  Unless, 
+  Switch, 
+  Case, 
+  Default,
+} from 'react-if'
+
+import ExploreTab from './components/ExploreTab'
+import ModelTab from './components/ModelTab'
+import AddDataTab from './components/AddDataTab'
+import VisualizeTab from './components/VisualizeTab'
+import AccountTab from './components/AccountTab'
+
+
 const { SubMenu } = Menu
 
 const { 
@@ -56,11 +74,21 @@ function App() {
           defaultSelectedKeys={[selectedTab]}
           onClick={e => setSelectedTab(e.key)}
         >
-          <Menu.Item key="explore">Explore</Menu.Item>
-          <Menu.Item key="model">Model</Menu.Item>
-          <Menu.Item key="add">Add Data</Menu.Item>
-          <Menu.Item key="viz">Visualize</Menu.Item>
-          <Menu.Item key="account">Account</Menu.Item>
+          <Menu.Item key="explore">
+            Explore
+          </Menu.Item>
+          <Menu.Item key="model">
+            Model
+          </Menu.Item>
+          <Menu.Item key="add">
+            Add Data
+          </Menu.Item>
+          <Menu.Item key="viz">
+            Visualize
+          </Menu.Item>
+          <Menu.Item key="account">
+            Account
+          </Menu.Item>
         </Menu>
       </Header>
       <Layout>
@@ -70,15 +98,24 @@ function App() {
           }
         }>
           <div className="site-layout-content">
-            <p>Welcome to the { selectedTab } tab!</p>
-            <DatePicker />
-            <ul>
-              {
-                users.map((user: {id: string, name: string}) => (
-                  <li key={user.id}>{user.name}</li>
-                ))
-              }
-            </ul>
+            <Switch>
+              <Case condition={selectedTab === "explore"}>
+                <ExploreTab />
+              </Case>
+              <Case condition={selectedTab === "model"}>
+                <ModelTab />
+              </Case>
+              <Case condition={selectedTab === "add"}>
+                <AddDataTab />
+              </Case>
+              <Case condition={selectedTab === "viz"}>
+                <VisualizeTab />
+              </Case>
+              <Case condition={selectedTab === "account"}>
+                <AccountTab />
+              </Case>
+              <Default>No tab selected...</Default>
+            </Switch>
           </div>
         </Content>
       </Layout>
