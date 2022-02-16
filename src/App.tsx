@@ -9,7 +9,20 @@ import {
   Menu, 
 } from 'antd'
 
-const { Header, Content, Footer } = Layout;
+import { 
+  UserOutlined, 
+  LaptopOutlined, 
+  NotificationOutlined, 
+} from '@ant-design/icons'
+
+const { SubMenu } = Menu
+
+const { 
+  Header, 
+  Content, 
+  Footer, 
+  Sider, 
+} = Layout
 
 
 createServer({
@@ -23,8 +36,10 @@ createServer({
 })
 
 function App() {
-  let [users, setUsers] = useState([])
+  const [selectedTab, setSelectedTab] = useState("explore")
 
+  // Temporary tool for testing with fake backend data
+  const [users, setUsers] = useState([])
   useEffect(() => {
     fetch("/api/users")
       .then((response) => response.json())
@@ -32,20 +47,30 @@ function App() {
   }, [])
 
   return (
-    <div className="App">
-      <Layout className="layout">
-        <Header>
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-            {new Array(15).fill(null).map((_, index) => {
-              const key = index + 1;
-              return <Menu.Item key={key}>{`nav ${key}`}</Menu.Item>;
-            })}
-          </Menu>
-        </Header>
-        <div className="spacer" style={{ height: "20px", }} />
-        <Content style={{ padding: '0 50px' }}>
+    <Layout className="App">
+      <Header>
+        <div className="logo" />
+        <Menu 
+          theme="dark" 
+          mode="horizontal" 
+          defaultSelectedKeys={[selectedTab]}
+          onClick={e => setSelectedTab(e.key)}
+        >
+          <Menu.Item key="explore">Explore</Menu.Item>
+          <Menu.Item key="model">Model</Menu.Item>
+          <Menu.Item key="add">Add Data</Menu.Item>
+          <Menu.Item key="viz">Visualize</Menu.Item>
+          <Menu.Item key="account">Account</Menu.Item>
+        </Menu>
+      </Header>
+      <Layout>
+        <Content 
+          style={{ 
+            padding: '0 50px', 
+          }
+        }>
           <div className="site-layout-content">
+            <p>Welcome to the { selectedTab } tab!</p>
             <DatePicker />
             <ul>
               {
@@ -56,11 +81,8 @@ function App() {
             </ul>
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          Koios ©2022 Created by Austin Poor
-        </Footer>
       </Layout>
-    </div>
+    </Layout>
   )
 }
 
