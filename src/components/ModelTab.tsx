@@ -13,7 +13,7 @@ import {
 
 // import { ColumnsType } from 'antd/es/table' // NOTE: When splitting this file, update types to use this instead
 
-const {Title} = Typography;
+const {Title, Text} = Typography;
 const {TabPane} = Tabs;
 const {Panel} = Collapse;
 
@@ -30,37 +30,51 @@ enum PropDataType {
 const dtypeColors = {
   [PropDataType.Text]: 'green',
   [PropDataType.Integer]: 'blue',
-  [PropDataType.Number]: 'blue',
-  [PropDataType.Boolean]: 'blue',
-  [PropDataType.Date]: 'blue',
-  [PropDataType.Time]: 'blue',
-  [PropDataType.DateTime]: 'blue',
+  [PropDataType.Number]: 'volcano',
+  [PropDataType.Boolean]: 'purple',
+  [PropDataType.Date]: 'cyan',
+  [PropDataType.Time]: 'magenta',
+  [PropDataType.DateTime]: 'orange',
 } as const;
 
+const dtypeNames = {
+  [PropDataType.Text]: 'Text',
+  [PropDataType.Integer]: 'Integer',
+  [PropDataType.Number]: 'Number',
+  [PropDataType.Boolean]: 'Boolean',
+  [PropDataType.Date]: 'Date',
+  [PropDataType.Time]: 'Time',
+  [PropDataType.DateTime]: 'DateTime',
+} as const;
+
+
 function PropTypeTag({dtype}: {dtype: PropDataType}) {
-  switch (dtype) {
-    case PropDataType.Text:
-      return <span>Text</span>;
-    case PropDataType.Integer:
-      return <span>Integer</span>;
-    case PropDataType.Number:
-      return <span>Number</span>;
-    case PropDataType.Boolean:
-      return <span>Boolean</span>;
-    case PropDataType.Date:
-      return <span>Date</span>;
-    case PropDataType.Time:
-      return <span>Time</span>;
-    case PropDataType.DateTime:
-      return <span>DateTime</span>;
-    default:
-      return <span>Unknown</span>;
-  }
+  return (
+    <Tag color={ dtypeColors[dtype] }>{ dtypeNames[dtype] }</Tag>
+  );
+}
+
+function PropTag({ prop }: { prop: Prop }) {
+  return (
+    <Text>
+      <Text code>{ prop.name }</Text>: <PropTypeTag dtype={ prop.dtype } />
+    </Text>
+  );
+}
+
+function PropTags({ props }: { props: Prop[] }) {
+  return (
+    <Text ellipsis={true}>
+      {props.map((prop, i) => (
+        <span>{ i > 0 && ', ' }<PropTag prop={prop} /></span>
+      ))}
+    </Text>
+  );
 }
 
 interface Prop {
   name: string;
-  type: PropDataType;
+  dtype: PropDataType;
   description?: string;
   defaultValue?: any;
   isNullable?: boolean;
@@ -83,7 +97,12 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
   nodes: [
     {
       type: 'Person',
-      props: [{name: 'name', type: PropDataType.Text}],
+      props: [
+        {name: 'name', dtype: PropDataType.Text},
+        {name: 'age', dtype: PropDataType.Integer},
+        {name: 'is_cool', dtype: PropDataType.Boolean},
+        {name: 'fave_color', dtype: PropDataType.Text},
+      ],
     },
     {
       type: 'Car',
@@ -91,7 +110,7 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
     },
     {
       type: 'Company',
-      props: [{name: 'name', type: PropDataType.Text}],
+      props: [{name: 'name', dtype: PropDataType.Text}],
     },
   ],
   edges: [
@@ -105,7 +124,7 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
       type: 'WORKS_AT',
       from: 'Person',
       to: 'Company',
-      props: [{name: 'title', type: PropDataType.Text}],
+      props: [{name: 'title', dtype: PropDataType.Text}],
     },
     {
       type: 'OWNS',
@@ -122,15 +141,23 @@ function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
       columns={[
         {
           title: '<tmp img>',
-          render: () => (
+          dataIndex: 'type',
+          render: (t) => (
             <div
               style={{
-                width: '25px',
-                height: '25px',
-                borderRadius: 'calc(25px / 2)',
+                width: '30px',
+                height: '30px',
+                borderRadius: '15px',
                 backgroundColor: '#f0cece',
+                textAlign: "center",
+                // justifyContent: "center",
+                verticalAlign: "middle",
+                textTransform: "uppercase",
+                fontWeight: "bold",
+                fontSize: "15px",
+                lineHeight: "30px",
               }}
-            />
+            >{ t[0] }</div>
           ),
         },
         {
@@ -140,7 +167,7 @@ function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
         {
           title: 'Properties',
           dataIndex: 'props',
-          render: (props: Prop[]) => JSON.stringify(props),
+          render: (props: Prop[]) => <PropTags props={props}/>,
         },
         {
           title: 'Actions',
@@ -163,11 +190,25 @@ export default function ModelTab() {
       <Divider />
 
       <Collapse defaultActiveKey={['nodes']}>
-        <Panel header="Object Types (aka Nodes)" key="nodes">
+        <Panel 
+          header={<Space>
+            <Title level={3}>Object Types</Title>
+            <Title level={5} type="secondary">(aka Nodes)</Title>
+          </Space>}
+          key="nodes"
+        >
           <NodeTable data={testData.nodes.map((node, i) => ({i, ...node}))} />
         </Panel>
 
-        <Panel header="Relationship Types (aka Edges)" key="edges"></Panel>
+        <Panel 
+          header={<Space>
+            <Title level={3}>Relationship Types</Title>
+            <Title level={5} type="secondary">(aka Edges)</Title>
+          </Space>}
+          key="edges"
+        >
+          ...
+        </Panel>
       </Collapse>
     </div>
   );

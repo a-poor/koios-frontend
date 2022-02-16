@@ -26,10 +26,6 @@ const {Header, Content, Footer, Sider} = Layout;
 function App() {
   const [selectedTab, setSelectedTab] = useState('model');
 
-  useEffect(() => {
-    console.log("NODE_ENV", process.env.NODE_ENV);
-  });
-
   // Temporary tool for testing with fake backend data
   const [users, setUsers] = useState([]);
   useEffect(() => {
