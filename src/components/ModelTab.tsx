@@ -9,6 +9,8 @@ import {
   Table,
   Tag,
   Space,
+  Tooltip,
+  Button,
 } from 'antd';
 
 // import { ColumnsType } from 'antd/es/table' // NOTE: When splitting this file, update types to use this instead
@@ -48,26 +50,20 @@ const dtypeNames = {
 } as const;
 
 
-function PropTypeTag({dtype}: {dtype: PropDataType}) {
-  return (
-    <Tag color={ dtypeColors[dtype] }>{ dtypeNames[dtype] }</Tag>
-  );
-}
-
 function PropTag({ prop }: { prop: Prop }) {
   return (
-    <Text>
-      <Text code>{ prop.name }</Text>: <PropTypeTag dtype={ prop.dtype } />
-    </Text>
+    <Tooltip title={`${prop.name}: ${dtypeNames[prop.dtype]}`}>
+      <Tag color={dtypeColors[prop.dtype]} style={{}}>
+        { prop.name }
+      </Tag>
+    </Tooltip>
   );
 }
 
 function PropTags({ props }: { props: Prop[] }) {
   return (
     <Text ellipsis={true}>
-      {props.map((prop, i) => (
-        <span>{ i > 0 && ', ' }<PropTag prop={prop} /></span>
-      ))}
+      {props.map((prop, i) => (<PropTag key={i} prop={prop} />))}
     </Text>
   );
 }
@@ -98,6 +94,15 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
     {
       type: 'Person',
       props: [
+        {name: 'name', dtype: PropDataType.Text},
+        {name: 'age', dtype: PropDataType.Integer},
+        {name: 'is_cool', dtype: PropDataType.Boolean},
+        {name: 'fave_color', dtype: PropDataType.Text},
+        
+        {name: 'name', dtype: PropDataType.Text},
+        {name: 'age', dtype: PropDataType.Integer},
+        {name: 'is_cool', dtype: PropDataType.Boolean},
+        {name: 'fave_color', dtype: PropDataType.Text},
         {name: 'name', dtype: PropDataType.Text},
         {name: 'age', dtype: PropDataType.Integer},
         {name: 'is_cool', dtype: PropDataType.Boolean},
@@ -140,7 +145,7 @@ function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
     <Table
       columns={[
         {
-          title: '<tmp img>',
+          align: 'right',
           dataIndex: 'type',
           render: (t) => (
             <div
@@ -150,12 +155,12 @@ function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
                 borderRadius: '15px',
                 backgroundColor: '#f0cece',
                 textAlign: "center",
-                // justifyContent: "center",
                 verticalAlign: "middle",
                 textTransform: "uppercase",
                 fontWeight: "bold",
                 fontSize: "15px",
                 lineHeight: "30px",
+                margin: "auto",
               }}
             >{ t[0] }</div>
           ),
@@ -171,7 +176,12 @@ function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
         },
         {
           title: 'Actions',
-          render: () => <div style={{}} />,
+          render: () => (
+            <Space>
+              <Button key="edit">Edit</Button>
+              <Button key="delete">Delete</Button>
+            </Space>
+          ),
         },
       ]}
       dataSource={data}
@@ -189,7 +199,7 @@ export default function ModelTab() {
 
       <Divider />
 
-      <Collapse defaultActiveKey={['nodes']}>
+      <Collapse defaultActiveKey={['nodes', 'edges']}>
         <Panel 
           header={<Space>
             <Title level={3}>Object Types</Title>
