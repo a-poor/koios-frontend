@@ -53,7 +53,7 @@ const dtypeNames = {
 function PropTag({ prop }: { prop: Prop }) {
   return (
     <Tooltip title={`${prop.name}: ${dtypeNames[prop.dtype]}`}>
-      <Tag color={dtypeColors[prop.dtype]} style={{}}>
+      <Tag color={dtypeColors[prop.dtype]}>
         { prop.name }
       </Tag>
     </Tooltip>
@@ -98,15 +98,6 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
         {name: 'age', dtype: PropDataType.Integer},
         {name: 'is_cool', dtype: PropDataType.Boolean},
         {name: 'fave_color', dtype: PropDataType.Text},
-        
-        {name: 'name', dtype: PropDataType.Text},
-        {name: 'age', dtype: PropDataType.Integer},
-        {name: 'is_cool', dtype: PropDataType.Boolean},
-        {name: 'fave_color', dtype: PropDataType.Text},
-        {name: 'name', dtype: PropDataType.Text},
-        {name: 'age', dtype: PropDataType.Integer},
-        {name: 'is_cool', dtype: PropDataType.Boolean},
-        {name: 'fave_color', dtype: PropDataType.Text},
       ],
     },
     {
@@ -140,7 +131,7 @@ const testData: {nodes: NodeInfo[]; edges: EdgeInfo[]} = {
   ],
 };
 
-function NodeTable({data}: {data: ({i: number} & NodeInfo)[]}) {
+function NodeTable({data}: {data: ({key: number} & NodeInfo)[]}) {
   return (
     <Table
       columns={[
@@ -207,7 +198,16 @@ export default function ModelTab() {
           </Space>}
           key="nodes"
         >
-          <NodeTable data={testData.nodes.map((node, i) => ({i, ...node}))} />
+          <NodeTable 
+            data={testData.nodes.map(
+              (node, i) => ({key: i, ...node})
+            )}
+          />
+
+          <Button type="primary">
+              Create New Object Type
+          </Button>
+        
         </Panel>
 
         <Panel 
